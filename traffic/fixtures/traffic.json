@@ -1,0 +1,84 @@
+[
+    {
+        "model": "traffic.classroom",
+        "pk": 1,
+        "fields": {
+            "teacher": "Albus Dumbledore"
+        }
+    },
+    {
+        "model": "traffic.classroom",
+        "pk": 2,
+        "fields": {
+            "teacher": "Severus Snape"
+        }
+    },
+    {
+        "model": "traffic.classroom",
+        "pk": 3,
+        "fields": {
+            "teacher": "Pomona Sprout"
+        }
+    },
+    {
+        "model": "traffic.family",
+        "pk": 1,
+        "fields": {
+            "family_number": 201
+        }
+    },
+    {
+        "model": "traffic.family",
+        "pk": 2,
+        "fields": {
+            "family_number": 202
+        }
+    },
+    {
+        "model": "traffic.family",
+        "pk": 3,
+        "fields": {
+            "family_number": 203
+        }
+    },
+    {
+        "model": "traffic.student",
+        "pk": 1,
+        "fields": {
+            "last_name": "Weasley",
+            "first_name": "Ron",
+            "family": 1,
+            "classroom": 1
+        }
+    },
+    {
+        "model": "traffic.student",
+        "pk": 2,
+        "fields": {
+            "last_name": "Weasley",
+            "first_name": "Fred",
+            "family": 1,
+            "classroom": 2
+        }
+    },
+    {
+        "model": "traffic.student",
+        "pk": 3,
+        "fields": {
+            "last_name": "Potter",
+            "first_name": "Harry",
+            "family": 2,
+            "classroom": 2
+        }
+    },
+    {
+        "model": "traffic.student",
+        "pk": 4,
+        "fields": {
+            "last_name": "Longbottom",
+            "first_name": "Neville",
+            "family": 3,
+            "classroom": 3
+        }
+    }
+]

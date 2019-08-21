@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+  <title>Checkout Students</title>
+  <style>
+    .grid-container {
+      display: grid;
+      grid-column-gap: 20px;
+      grid-row-gap: 20px;
+      grid-template-columns: auto auto auto;
+      padding: 10px;
+    }
+    .grid-item {
+      padding: 20px;
+      font-size: 20px;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+  <script>
+    //
+    // Dealing with CSRF
+    //
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
+            }
+        }
+    });
+
+    // Builds an identifier for the items in the history list
+    function makeHistoryItemId(fid, ct){
+      return fid + '_' + ct.replace(/:/g, "-").replace(/\./g, "x");
+    }
+
+    $(document).ready(function(){
+      //
+      // Initializing checkout type to walker
+      //
+      $("#checkoutTypeWalker").css("background-color", "#416fc4").css("color", "#FFF").css("font-weight", "bold")
+      $("#checkoutType").text("walker")
+
+      $("#checkoutTypeWalker").click(function(){
+          $("#checkoutType").text(function(i, origText){return "walker"})
+          $("#checkoutTypeWalker").css("background-color", "#416fc4").css("color", "white").css("font-weight", "bold")
+          $("#checkoutTypeCarline").css("background-color", "white").css("color", "black").css("font-weight", "normal")
+      })
+      $("#checkoutTypeCarline").click(function(){
+          $("#checkoutType").text(function(i, origText){return "carline"})
+          $("#checkoutTypeCarline").css("background-color", "#416fc4").css("color", "white").css("font-weight", "bold")
+          $("#checkoutTypeWalker").css("background-color", "white").css("color", "black").css("font-weight", "normal")
+      })
+
+      //
+      // Basic buttons
+      //
+      $("#button1").click(function(){
+          $("#familyNumber").text(function(i, origText){return origText + "1"})
+      })
+      $("#button2").click(function(){
+          $("#familyNumber").text(function(i, origText){return origText + "2"})
+      })
+      $("#button3").click(function(){
+          $("#familyNumber").text(function(i, origText){return origText + "3"})
+      })
+      $("#button4").click(function(){
+          $("#familyNumber").text(function(i, origText){return origText + "4"})
+      })
+      $("#button5").click(function(){
+          $("#familyNumber").text(function(i, origText){return origText + "5"})
+      })
+      $("#button6").click(function(){
+          $("#familyNumber").text(function(i, origText){return origText + "6"})
+      })
+      $("#button7").click(function(){
+          $("#familyNumber").text(function(i, origText){return origText + "7"})
+      })
+      $("#button8").click(function(){
+          $("#familyNumber").text(function(i, origText){return origText + "8"})
+      })
+      $("#button9").click(function(){
+          $("#familyNumber").text(function(i, origText){return origText + "9"})
+      })
+      $("#button0").click(function(){
+          $("#familyNumber").text(function(i, origText){return origText + "0"})
+      })
+      $("#buttonClear").click(function(){
+          $("#familyNumber").text(function(i, origText){return ""})
+      })
+
+      //
+      // Handling checkout request
+      //
+      $("#buttonSend").click(function(){
+        // Retreiving checkout data
+        var fn = $("#familyNumber").text()
+        var ct = $("#checkoutType").text();
+        console.log("Checking out family " + fn + " as " + ct)
+        // Keeping only 10 items in the history
+        $( "#history li:nth-child(10)" ).remove();
+        // Invoking API
+        $.post("/api/checkout",
+        {
+          family_number: fn,
+          checkout_type: ct
+        })
+        .done(function( resp ) {
+          if(resp.hasOwnProperty('family_id')){
+            console.log("Successfully checked out family " + fn + " as " + ct)
+            // Adding family number to history (only if the result is successful)
+            $("#history").prepend(
+              '<li style="color: green" id="' + makeHistoryItemId(resp["family_id"], resp["checkout_time"]) + '">' +
+              '<span>Family ' + resp["family_number"] + " successfully checked out as " + resp["checkout_type"] + ".<span>" +
+              '<a style="padding-left: 20px" onclick="cancelCheckout(' + resp["family_id"] + ', \'' + resp["checkout_time"] + '\')">Cancel</a>' +
+              '</li>'
+            )
+          }
+        })
+        .fail(function( xhr, status, errorThrown ) {
+          console.log("Failed to check out family " + fn + " as " + ct + " with error status: " + xhr.status)
+          if(xhr.status == 404){
+            $("#history").prepend("<li style=\"color: red\">Family " + fn + " does not exist!</li>")
+          } else {
+            $("#history").prepend("<li style=\"color: red\">Family " + fn + " failed to be called."+ xhr.responseText +"</li>")
+          }
+          console.dir( xhr );
+        })
+        .always(function() {
+          // Clear the family number
+          $("#familyNumber").text(function(i, origText){return ""})
+        })
+      })
+    })
+
+    //
+    // Handling checkout cancelation request
+    //
+    function cancelCheckout(fid, ct){
+      console.log("Cancelling request for family " + fid + " at " + ct)
+      $.post("/api/cancel_checkout",
+      {
+        family_id: fid,
+        checkout_time: ct
+      })
+      .done(function( resp ) {
+        console.log("Successfully cancelled checkout for family " + fid + " at " + ct)
+        // Deleting entry from history
+        $("#" + makeHistoryItemId(fid, ct)).remove()
+      })
+      .fail(function( xhr, status, errorThrown ) {
+        console.log("Failed to cancel checkout for family " + fid + " at " + ct)
+        console.dir( xhr )
+      })
+    }
+  </script>
+</head>
+<body>
+  {% csrf_token %}
+  <div>
+    <div class="tile is-ancestor">
+      <div class="tile is-parent">
+        <!-- is-7 -->
+        <div class="tile is-vertical is-parent">
+          <div class="tile is-child box">
+            <span class="title is-5">Type:</span>
+            <div id="checkoutTypeWalker" class="button" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px; margin: 0px 20px 0px 20px;">Walker</div>
+            <div id="checkoutTypeCarline" class="button" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px; margin: 0px 0px 0px 0px;">Car Line</div>
+            <span id="checkoutType" style="display: none;"></span>
+          </div>
+        </div>
+      </div>
+    <!-- </div>
+    <div class="tile is-ancestor"> -->
+      <div class="tile is-parent">
+        <div class="tile is-vertical is-parent">
+          <div class="tile is-child box">
+            <p class="title is-5">Family:</p>
+          </div>
+        </div>
+        <div class="tile is-parent">
+          <div class="tile is-child box">
+            <div id="familyNumber" class="title is-5" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-container">
+    <div id="button1" class="grid-item button is-light" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">1</div>
+    <div id="button2" class="grid-item button is-light" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">2</div>
+    <div id="button3" class="grid-item button is-light" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">3</div>
+    <div id="button4" class="grid-item button is-light" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">4</div>
+    <div id="button5" class="grid-item button is-light" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">5</div>
+    <div id="button6" class="grid-item button is-light" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">6</div>
+    <div id="button7" class="grid-item button is-light" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">7</div>
+    <div id="button8" class="grid-item button is-light" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">8</div>
+    <div id="button9" class="grid-item button is-light" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">9</div>
+    <div id="buttonClear" class="grid-item button is-danger"  style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">Clear</div>
+    <div id="button0" class="grid-item button is-light" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">0</div>
+    <div id="buttonSend" class="grid-item button is-success" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">Send</div>
+  </div>
+
+  <section class="section">
+    <p class="title is-4">History:</p>
+    <ul id="history"></ul>
+  </section>
+
+</body>
+{% load static %}
+</html>

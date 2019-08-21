@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+  <title>Classroom</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      //
+      // Handling Teacher selection
+      //
+      var teacherMap
+      var selectedTeacherId
+      $("#mainSection").hide()
+      $.get("/api/classrooms", function(data, status){
+        teacherMap = data
+        $("#teachers").append("<option value=\"0\">Select Teacher's name</option>")
+        data.forEach(t => {
+          $("#teachers").append("<option value=\"" + t.id + "\">" + t.teacher + "</option>")
+        })
+      })
+      $("#teachers").change(function(){
+        selectedTeacherId = $(this).children("option:selected").val()
+        var selectedTeacherName
+        for (let item of teacherMap) {
+          if(item.id == selectedTeacherId){
+            selectedTeacherName = item.teacher
+            break
+          }
+        }
+        $("#teacherName").text(selectedTeacherName)
+        $("#teacherSelector").hide()
+        $("#mainSection").show()
+        doStuff()
+      })
+
+      //
+      // Handling Students checkouts
+      //
+      function doStuff() {
+        $.get("/api/get_students/"+selectedTeacherId+"/", function(data, status){
+          $("#walker").html("")
+          $("#carline").html("")
+          data.forEach(item => {
+            var bp = "<li>" + item["first_name"] + ", " + item["last_name"] + "</li>"
+            if(item["is_walker"]){
+              $("#walker").append(bp)
+            } else {
+              $("#carline").append(bp)
+            }
+          })
+        })
+        // TODO: update refresh rate based on time of day (more frequent around pick up time)
+        setTimeout(doStuff, 2000)
+      }
+
+    })
+  </script>
+</head>
+<body>
+  <section id="teacherSelector" class="section">
+    <div class="container">
+      <h1 class="title">Select a Teacher:</h1>
+      <div class="select">
+        <select id="teachers"></select>
+      </div>
+    </div>
+  </section>
+
+  <section id="mainSection" class="section">
+    <center><p id="teacherName" class="title is-3" /></center>
+
+    <div class="tile is-ancestor">
+      <div class="tile is-parent">
+        <div class="tile is-vertical is-parent">
+          <div class="tile is-child box">
+            <p class="title is-4">Walker</p>
+            <ul id="walker"></ul>
+          </div>
+        </div>
+        <div class="tile is-parent">
+          <div class="tile is-child box">
+            <p class="title is-4">Carline</p>
+            <ul id="carline"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+{% load static %}
+</html>

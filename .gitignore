@@ -1,0 +1,10 @@
+db.sqlite3
+skyview_traffic/settings.py
+skyview_traffic/settings.py.remote
+static/*
+__pycache__
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
