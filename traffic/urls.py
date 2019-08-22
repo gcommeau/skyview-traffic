@@ -1,7 +1,7 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+from django.contrib.auth import views as auth_views
 
-app_name = 'traffic'
 urlpatterns = [
     # API calls
     path('api/classrooms', views.ClassroomListCreate.as_view() ),
@@ -11,4 +11,8 @@ urlpatterns = [
     # HTML views
     path('classroom', views.classroom_view, name='view_classroom' ),
     path('checkout', views.checkout_view, name='view_checkout'),
+    # Account management
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/profile/', views.no_view),
+    path('', views.no_view),
 ]

@@ -4,18 +4,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
-  <title>Checkout Students</title>
+  <title>SkyView Traffic - Checkout Students</title>
   <style>
+    .portion {
+      padding: 15px;
+    }
     .grid-container {
       display: grid;
       grid-column-gap: 20px;
       grid-row-gap: 20px;
       grid-template-columns: auto auto auto;
-      padding: 10px;
     }
     .grid-item {
       padding: 20px;
       font-size: 20px;
+    }
+    .checkoutButton {
+      border-width: 1px 2px 2px 1px;
+      border-style: solid;
+      border-color: black;
+      border-radius: 15px;
+      margin: 0px 0px 0px 10px;
     }
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -43,21 +52,31 @@
 
     $(document).ready(function(){
       //
-      // Initializing checkout type to walker
+      // Handling checkout types
       //
-      $("#checkoutTypeWalker").css("background-color", "#416fc4").css("color", "#FFF").css("font-weight", "bold")
-      $("#checkoutType").text("walker")
-
-      $("#checkoutTypeWalker").click(function(){
+      function setCheckoutTypeWalker(){
           $("#checkoutType").text(function(i, origText){return "walker"})
           $("#checkoutTypeWalker").css("background-color", "#416fc4").css("color", "white").css("font-weight", "bold")
           $("#checkoutTypeCarline").css("background-color", "white").css("color", "black").css("font-weight", "normal")
-      })
-      $("#checkoutTypeCarline").click(function(){
+          $("#checkoutTypePreSchool").css("background-color", "white").css("color", "black").css("font-weight", "normal")
+      }
+      function setCheckoutTypeCarline(){
           $("#checkoutType").text(function(i, origText){return "carline"})
-          $("#checkoutTypeCarline").css("background-color", "#416fc4").css("color", "white").css("font-weight", "bold")
           $("#checkoutTypeWalker").css("background-color", "white").css("color", "black").css("font-weight", "normal")
-      })
+          $("#checkoutTypeCarline").css("background-color", "#416fc4").css("color", "white").css("font-weight", "bold")
+          $("#checkoutTypePreSchool").css("background-color", "white").css("color", "black").css("font-weight", "normal")
+      }
+      function setCheckoutTypePreSchool(){
+          $("#checkoutType").text(function(i, origText){return "preschool"})
+          $("#checkoutTypeWalker").css("background-color", "white").css("color", "black").css("font-weight", "normal")
+          $("#checkoutTypeCarline").css("background-color", "white").css("color", "black").css("font-weight", "normal")
+          $("#checkoutTypePreSchool").css("background-color", "#416fc4").css("color", "white").css("font-weight", "bold")
+      }
+      $("#checkoutTypeWalker").click(function(){setCheckoutTypeWalker()})
+      $("#checkoutTypeCarline").click(function(){setCheckoutTypeCarline()})
+      $("#checkoutTypePreSchool").click(function(){setCheckoutTypePreSchool()})
+      // Initializing checkout type to walker
+      setCheckoutTypeWalker()
 
       //
       // Basic buttons
@@ -164,37 +183,17 @@
 </head>
 <body>
   {% csrf_token %}
-  <div>
-    <div class="tile is-ancestor">
-      <div class="tile is-parent">
-        <!-- is-7 -->
-        <div class="tile is-vertical is-parent">
-          <div class="tile is-child box">
-            <span class="title is-5">Type:</span>
-            <div id="checkoutTypeWalker" class="button" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px; margin: 0px 20px 0px 20px;">Walker</div>
-            <div id="checkoutTypeCarline" class="button" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px; margin: 0px 0px 0px 0px;">Car Line</div>
-            <span id="checkoutType" style="display: none;"></span>
-          </div>
-        </div>
-      </div>
-    <!-- </div>
-    <div class="tile is-ancestor"> -->
-      <div class="tile is-parent">
-        <div class="tile is-vertical is-parent">
-          <div class="tile is-child box">
-            <p class="title is-5">Family:</p>
-          </div>
-        </div>
-        <div class="tile is-parent">
-          <div class="tile is-child box">
-            <div id="familyNumber" class="title is-5" />
-          </div>
-        </div>
-      </div>
+  <div class="portion">
+    <div style="padding-bottom: 15px; border-bottom: solid; border-width: 1px; border-color: LightGray;">
+      <div id="checkoutTypeWalker" class="button checkoutButton">Walker</div>
+      <div id="checkoutTypeCarline" class="button checkoutButton">Car Line</div>
+      <div id="checkoutTypePreSchool" class="button checkoutButton">Preschool</div>
+      <span id="checkoutType" style="display: none;"></span>
     </div>
+    <p class="title is-5" style="padding-top: 15px;">Family: <span id="familyNumber" style="padding: 20px"></span></p>
   </div>
 
-  <div class="grid-container">
+  <div class="grid-container portion" style="border-bottom: solid; border-width: 1px; border-color: LightGray;">
     <div id="button1" class="grid-item button is-light" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">1</div>
     <div id="button2" class="grid-item button is-light" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">2</div>
     <div id="button3" class="grid-item button is-light" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">3</div>
@@ -209,10 +208,10 @@
     <div id="buttonSend" class="grid-item button is-success" style="border-width: 1px 2px 2px 1px; border-style: solid; border-color: black; border-radius: 15px;">Send</div>
   </div>
 
-  <section class="section">
-    <p class="title is-4">History:</p>
+  <div class="portion">
+    <p class="title is-5">History:</p>
     <ul id="history"></ul>
-  </section>
+  </div>
 
 </body>
 {% load static %}
