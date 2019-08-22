@@ -22,5 +22,5 @@ class StudentSerializer(serializers.ModelSerializer):
 class CheckoutSerializer(serializers.ModelSerializer):
     class Meta:
         model = Checkout
-        #fields = ('checkout_time', 'family', 'is_walker')
+        #fields = ('checkout_time', 'family', 'checkout_type')
         fields = '__all__'

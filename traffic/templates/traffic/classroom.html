@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
-  <title>Classroom</title>
+  <title>SkyView Traffic - Classroom</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script>
     $(document).ready(function(){
@@ -32,6 +32,7 @@
         }
         $("#teacherName").text(selectedTeacherName)
         $("#teacherSelector").hide()
+        $("#preschoolContainer").hide()
         $("#mainSection").show()
         doStuff()
       })
@@ -43,14 +44,27 @@
         $.get("/api/get_students/"+selectedTeacherId+"/", function(data, status){
           $("#walker").html("")
           $("#carline").html("")
+          $("#preschool").html("")
+          var showpreschool = false
           data.forEach(item => {
-            var bp = "<li>" + item["first_name"] + ", " + item["last_name"] + "</li>"
-            if(item["is_walker"]){
-              $("#walker").append(bp)
-            } else {
-              $("#carline").append(bp)
+            var bp = "<li>" + item["first_name"] + " " + item["last_name"] + "</li>"
+            switch(item["checkout_type"]){
+              case "walker":
+                $("#walker").append(bp)
+                break
+              case "carline":
+                $("#carline").append(bp)
+                break
+              case "preschool":
+                showpreschool = true
+                $("#preschool").append(bp)
             }
           })
+          if(showpreschool){
+            $("#preschoolContainer").show()
+          } else {
+            $("#preschoolContainer").hide()
+          }
         })
         // TODO: update refresh rate based on time of day (more frequent around pick up time)
         setTimeout(doStuff, 2000)
@@ -82,8 +96,14 @@
         </div>
         <div class="tile is-parent">
           <div class="tile is-child box">
-            <p class="title is-4">Carline</p>
+            <p class="title is-4">Car Line</p>
             <ul id="carline"></ul>
+          </div>
+        </div>
+        <div id="preschoolContainer" class="tile is-parent">
+          <div class="tile is-child box">
+            <p class="title is-4">Preschool</p>
+            <ul id="preschool"></ul>
           </div>
         </div>
       </div>

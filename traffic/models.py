@@ -26,9 +26,21 @@ class Student(models.Model):
 
 
 class Checkout(models.Model):
+    TYPE_WALKER = 'walker'
+    TYPE_CARLINE = 'carline'
+    TYPE_PRESCHOOL = 'preschool'
+    CHECKOUT_TYPE = [
+        (TYPE_WALKER, 'Walker'),
+        (TYPE_CARLINE, 'Car Line'),
+        (TYPE_PRESCHOOL, 'Preschool'),
+    ]
     checkout_time = models.DateTimeField(auto_now_add=True)
     family = models.ForeignKey(Family, on_delete=models.CASCADE)
-    is_walker = models.BooleanField()
+    checkout_type = models.CharField(
+        max_length=16,
+        choices=CHECKOUT_TYPE,
+        default=TYPE_WALKER,
+    )
 
     def __str__(self):
-        return str(f"{self.checkout_time}, is_walker={self.is_walker}")
+        return str(f"{self.checkout_time}, checkout_type={self.checkout_type}")
