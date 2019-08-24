@@ -25,6 +25,11 @@ SECRET_KEY = 'some secret...'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Reworking login url
+LOGIN_REDIRECT_URL='login'
+LOGIN_URL='login'
+
+
 ALLOWED_HOSTS = []
 
 
