@@ -11,8 +11,6 @@ urlpatterns = [
     # HTML views
     path('classroom', views.classroom_view, name='view_classroom' ),
     path('checkout', views.checkout_view, name='view_checkout'),
-    # Account management
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/profile/', views.no_view),
+    path('login', auth_views.LoginView.as_view(), name='login'),
     path('', views.no_view),
 ]
