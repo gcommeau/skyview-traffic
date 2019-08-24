@@ -4,10 +4,10 @@ from django.utils import timezone
 from django.db import connection
 from django.contrib.auth.decorators import login_required
 
-from rest_framework import generics
+from rest_framework import status, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 from traffic.models import *
 from traffic.serializers import *
@@ -17,7 +17,6 @@ logger = logging.getLogger("traffic")
 @login_required
 def checkout_view(request):
     return render(request, 'traffic/checkout.html')
-
 
 @login_required
 def classroom_view(request):
@@ -30,6 +29,7 @@ def no_view(request):
 class ClassroomListCreate(generics.ListAPIView):
     queryset = Classroom.objects.all().order_by("teacher")
     serializer_class = ClassroomSerializer
+    permission_classes = [IsAuthenticated]
 
 @api_view(['POST'])
 def checkout(request):
