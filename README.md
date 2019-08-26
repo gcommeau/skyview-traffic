@@ -9,7 +9,7 @@ Skyview Academy elementary students need to be picked up by their parents/caregi
 
 Skyview has a database of elementary students, each associated with a family number and a classroom. In order to pick up their children, the parents need to present their family number card to one of the volunteers.
 
-The school used to have a system in place, but it unfortunately partially stopped working. This web application provides a replacement for the previous system.
+The school used to have a system in place, but unfortunately, it recently partially stopped working. This web application provides a replacement for the previous system.
 
 
 # Usage
@@ -27,9 +27,9 @@ The application requires user authentication in order to access the web pages, R
 
 # Architecture
 
-This is a [Django](https://www.djangoproject.com/) web application. The fronend template use [Query](https://jquery.com/) to provide a dynamic user experience.
+This is a [Django](https://www.djangoproject.com/) web application. The front-end templates use [Query](https://jquery.com/) to provide a dynamic user experience.
 
-To provide scale and reliability, it is deployed using AWS Beanstalk with a RDS (MySQL) database. The Beanstalk environment has an https listener (coupled with a public certificate) to provide in-flight encryption.
+To provide scale and reliability, it is deployed using [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) with a [RDS](https://aws.amazon.com/rds/) (MySQL) database. The Beanstalk environment uses [an https listener](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/configuring-https.html) coupled with a public certificate to provide in-flight encryption.
 
 # Development
 
@@ -37,9 +37,10 @@ To provide scale and reliability, it is deployed using AWS Beanstalk with a RDS 
 ```
 python --version
 ```
-1. Clone this git repository.
-1. Optional but recommended: setup a virtual environment, e.g.
+1. Clone this git repository
+1. (Optional but recommended) Setup a virtual environment
 ```
+pip3 install virtualenv
 virtualenv ~/skyview-traffic-dev
 . ~/skyview-traffic-dev/bin/activate
 ```
@@ -48,13 +49,20 @@ virtualenv ~/skyview-traffic-dev
 pip install -r requirements.txt
 ```
 1. To run locally:
-```
-# Loading setting for local development
-mv settings.py.EXAMPLE settings.py
-# Building the database
-python manage.py migrate
-# Loading play data
-python manage.py loaddata traffic
-# Starting the Django server
-python manage.py runserver
-```
+  1. Load local development settings
+  ```
+  mv settings.py.EXAMPLE settings.py
+  ```
+  1. Build a local database
+  ```
+  python manage.py migrate
+  ```
+  1. Load play data (Harry Potter theme)
+  ```
+  python manage.py loaddata traffic
+  ```
+  1. Start the Django server
+  ```
+  python manage.py runserver
+  ```
+  1. Navigate to the location pointed by Django (usually http://localhost:8000/)
